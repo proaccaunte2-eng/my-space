@@ -5,19 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Пространство разговора | Любовь — Бережные диалоги для женщин</title>
-    <meta name="description" content="Сервис честных диалогов для женщин. Безопасное пространство в Краснодаре и онлайн. Без советов и оценок." />
+    <meta name="description" content="Когда внутри шум — мы помогаем найти тишину. Честные диалоги для женщин в Краснодаре и онлайн." />
     
-    <!-- Open Graph / Facebook / Telegram -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://lyubov-space.ru/" />
-    <meta property="og:title" content="Пространство разговора | Любовь" />
-    <meta property="og:description" content="Когда внутри шум — мы помогаем найти тишину. Честные диалоги для женщин." />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=600" />
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
     <script>
       tailwind.config = {
         theme: {
@@ -35,20 +29,6 @@
                 charcoal: '#4A443F',
                 dust: '#BCAAA4',
               }
-            },
-            animation: {
-              fadeIn: 'fadeIn 0.8s ease-out forwards',
-              slideUp: 'slideUp 0.6s ease-out forwards',
-            },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
-              },
-              slideUp: {
-                '0%': { transform: 'translateY(20px)', opacity: '0' },
-                '100%': { transform: 'translateY(0)', opacity: '1' },
-              }
             }
           }
         }
@@ -60,27 +40,30 @@
         color: #4A443F;
         -webkit-font-smoothing: antialiased;
       }
-      .mobile-menu-open {
-        overflow: hidden;
+      .animate-fadeIn {
+        animation: fadeIn 1.2s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
       }
     </style>
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
     "vite": "https://esm.sh/vite@^7.3.1",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
-  <link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
-    <!-- CRITICAL: Entry point for the application -->
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
