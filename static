@@ -1,1 +1,10 @@
-static/metadata.json
+{
+  "name": "Пространство разговора — Любовь",
+  "short_name": "Любовь",
+  "description": "Сервис бережных диалогов для женщин. Наводим порядок в мыслях через честное общение.",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#FAF7F2",
+  "background_color": "#FAF7F2",
+  "requestFramePermissions": []
+}
