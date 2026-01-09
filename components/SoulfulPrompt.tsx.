@@ -42,24 +42,25 @@ const SoulfulPrompt: React.FC = () => {
     setIsLoading(true);
     setMood(selectedMood);
     
-    // Имитация вдумчивости
     await new Promise(resolve => setTimeout(resolve, 1200));
 
     try {
-      const apiKey = process.env.API_KEY;
-      // Если есть ключ API, пробуем Gemini
+      // Используем safe-access для process.env, чтобы не ломать сборку
+      const env = (process as any).env;
+      const apiKey = env ? env.API_KEY : null;
+
       if (apiKey && apiKey !== 'undefined' && apiKey.length > 10) {
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
           model: 'gemini-3-flash-preview',
-          contents: `Напиши один очень короткий (до 12 слов), глубокий и бережный вопрос для женщины, которая сейчас чувствует ${selectedMood}. Вопрос должен помогать ей заглянуть внутрь себя. Без лишних слов и приветствий.`,
+          contents: `Напиши один очень короткий (до 12 слов), глубокий и бережный вопрос для женщины, которая сейчас чувствует ${selectedMood}. Вопрос должен помогать ей заглянуть внутрь себя. Без вступлений.`,
         });
         setPrompt(response.text || getRandomFallback(selectedMood));
       } else {
-        // Если ключа нет — берем из нашего списка
         setPrompt(getRandomFallback(selectedMood));
       }
     } catch (error) {
+      console.error("AI Error:", error);
       setPrompt(getRandomFallback(selectedMood));
     } finally {
       setIsLoading(false);
