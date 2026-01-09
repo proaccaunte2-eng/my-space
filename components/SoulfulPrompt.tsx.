@@ -1,0 +1,135 @@
+
+import React, { useState } from 'react';
+import { GoogleGenAI } from "@google/genai";
+import { Sparkles, Loader2, RefreshCw } from 'lucide-react';
+
+const SoulfulPrompt: React.FC = () => {
+  const [mood, setMood] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const moods = [
+    { id: 'tired', label: 'Усталость', emoji: '☁️' },
+    { id: 'lost', label: 'Потерянность', emoji: '🧭' },
+    { id: 'anxious', label: 'Тревога', emoji: '🌊' },
+    { id: 'hope', label: 'Надежда', emoji: '🌱' },
+  ];
+
+  const fallbackQuestions: Record<string, string[]> = {
+    'Усталость': [
+      "О чем бы попросило твое тело, если бы ты разрешила ему просто выдохнуть сейчас?",
+      "Какое одно дело ты можешь отложить сегодня без малейшего чувства вины?",
+      "Если бы отдых был цветом, то в какой оттенок тебе хочется укутаться прямо сейчас?"
+    ],
+    'Потерянность': [
+      "Если бы любой твой выбор сегодня был правильным, что бы ты сделала первым?",
+      "Вспомни момент, когда ты чувствовала себя максимально собой. Что там было?",
+      "Какой маленький шаг сегодня напомнит тебе, что ты — это ты?"
+    ],
+    'Тревога': [
+      "Что прямо сейчас, в эту секунду, остается неизменным и надежным вокруг тебя?",
+      "Если бы твоя тревога была просто проходящим облаком, каким бы оно было?",
+      "Какое слово поддержки ты бы сказала себе, если бы была своей лучшей подругой?"
+    ],
+    'Надежда': [
+      "Какой крошечный росток радости ты заметила за последние сутки?",
+      "О чем ты мечтаешь, когда позволяешь себе не думать о «надо»?",
+      "Что в твоем будущем заставляет твое сердце биться чуть теплее?"
+    ]
+  };
+
+  const generatePrompt = async (selectedMood: string) => {
+    setIsLoading(true);
+    setMood(selectedMood);
+    
+    // Имитация вдумчивости
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
+    try {
+      const apiKey = process.env.API_KEY;
+      // Если есть ключ API, пробуем Gemini
+      if (apiKey && apiKey !== 'undefined' && apiKey.length > 10) {
+        const ai = new GoogleGenAI({ apiKey });
+        const response = await ai.models.generateContent({
+          model: 'gemini-3-flash-preview',
+          contents: `Напиши один очень короткий (до 12 слов), глубокий и бережный вопрос для женщины, которая сейчас чувствует ${selectedMood}. Вопрос должен помогать ей заглянуть внутрь себя. Без лишних слов и приветствий.`,
+        });
+        setPrompt(response.text || getRandomFallback(selectedMood));
+      } else {
+        // Если ключа нет — берем из нашего списка
+        setPrompt(getRandomFallback(selectedMood));
+      }
+    } catch (error) {
+      setPrompt(getRandomFallback(selectedMood));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getRandomFallback = (m: string) => {
+    const list = fallbackQuestions[m] || ["О чем важном ты сегодня еще не успела подумать?"];
+    return list[Math.floor(Math.random() * list.length)];
+  };
+
+  return (
+    <section className="py-24 bg-brand-powder/20 border-y border-brand-sand/30">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="bg-white rounded-[3.5rem] p-8 md:p-16 shadow-xl border border-brand-sand/20 text-center space-y-10">
+          <div className="space-y-4">
+            <h2 className="text-3xl md:text-4xl font-serif italic text-brand-charcoal">Минута для внутреннего диалога</h2>
+            <p className="text-brand-charcoal/60 max-w-lg mx-auto leading-relaxed font-light">
+              Выберите состояние, которое вам ближе сейчас, и я предложу вопрос для бережного размышления.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {moods.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => generatePrompt(m.label)}
+                disabled={isLoading}
+                className={`px-6 py-3 rounded-full border transition-all flex items-center space-x-2 ${
+                  mood === m.label 
+                    ? 'bg-brand-charcoal text-white border-brand-charcoal shadow-lg' 
+                    : 'bg-transparent border-brand-sand text-brand-charcoal hover:bg-brand-beige'
+                } active:scale-95 disabled:opacity-50`}
+              >
+                <span>{m.emoji}</span>
+                <span className="text-sm font-medium">{m.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="min-h-[200px] flex items-center justify-center relative bg-brand-beige/20 rounded-[2.5rem] border border-dashed border-brand-sand/40 p-8">
+            {isLoading ? (
+              <div className="flex flex-col items-center space-y-4">
+                <Loader2 className="w-8 h-8 text-brand-dust animate-spin" />
+                <p className="text-[10px] uppercase tracking-[0.2em] text-brand-dust font-bold">Ищу нужные слова для вас...</p>
+              </div>
+            ) : prompt ? (
+              <div className="space-y-6 animate-fadeIn">
+                <p className="text-2xl md:text-4xl font-serif italic text-brand-charcoal leading-snug max-w-2xl mx-auto">
+                  «{prompt}»
+                </p>
+                <button 
+                  onClick={() => generatePrompt(mood)}
+                  className="inline-flex items-center space-x-2 text-[10px] uppercase tracking-widest text-brand-dust hover:text-brand-charcoal font-bold transition-colors"
+                >
+                  <RefreshCw size={12} />
+                  <span>Другой вопрос</span>
+                </button>
+              </div>
+            ) : (
+              <div className="opacity-30 flex flex-col items-center space-y-4">
+                <Sparkles size={48} className="text-brand-dust" />
+                <p className="text-[10px] uppercase tracking-[0.2em] font-bold">Нажмите на состояние выше</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SoulfulPrompt;
